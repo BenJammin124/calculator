@@ -8,20 +8,31 @@ const display = document.querySelector('#display');
 let firstNum = '';
 let operator = '';
 let secNum = '';
+let decimalAllowed = true;
 
 numberBtn.forEach(button => {
     button.addEventListener("click", function () {
-        let buttonValue = parseInt(button.value);
-        if (operator === '' && firstNum == '') {
-            firstNum += buttonValue;
-            display.textContent = firstNum;
-            return firstNum;
+        let buttonValue = button.value;
+        if (buttonValue === '.') {
+            if (decimalAllowed) {
+                if (operator === '' || firstNum === '') {
+                    firstNum += buttonValue;
+                    display.textContent = firstNum;
+                } else {
+                    secNum += buttonValue;
+                    display.textContent = secNum;
+                }
+            } decimalAllowed = false;
         } else {
-            secNum = 0;
-            secNum += buttonValue;
-            display.textContent = secNum;
-            return secNum;
+            if (operator === '' || firstNum === '') {
+                firstNum += buttonValue;
+                display.textContent = firstNum;
+            } else {
+                secNum += buttonValue;
+                display.textContent = secNum;
+            }
         }
+
     })
 
 })
@@ -51,30 +62,46 @@ equals.addEventListener("click", function () {
     let result = '';
     result = operate(operator, firstNum, secNum);
     firstNum = result;
+    secNum = '';
 
 });
 
+clear.addEventListener("click", () => {
+    operator = '';
+    firstNum = '';
+    secNum = '';
+    display.textContent = 0;
+})
+
+// decimal.addEventListener("click", () => {
+//     if (decimalAllowed === true) {
+//         display.textContent += '.';
+//         decimalAllowed = false;
+//     }
+
+// })
+
 const operate = (operator, firstNum, secNum) => {
-    let result = operator(parseInt(firstNum), parseInt(secNum));
+    let result = operator(firstNum, secNum);
     display.textContent = result;
     return result;
 }
 
 
 const add = (x, y) => {
-    let result = parseInt(x) + parseInt(y);
+    let result = +x + +y;
     return result;
 }
 const subtract = (x, y) => {
-    let result = x - y;
+    let result = +x - +y;
     return result;
 }
 const divide = (x, y) => {
-    let result = x / y;
+    let result = +x / +y;
     return result;
 }
 const multiply = (x, y) => {
-    let result = x * y;
+    let result = +x * +y;
     return result;
 }
 
