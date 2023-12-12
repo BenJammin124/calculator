@@ -10,32 +10,64 @@ let operator = '';
 let secNum = '';
 let decimalAllowed = true;
 
+// numberBtn.forEach(button => {
+//     button.addEventListener("click", function () {
+//         let buttonValue = button.value;
+//         if (buttonValue === '.') {
+//             if (decimalAllowed) {
+//                 if (operator === '' || firstNum === '') {
+//                     firstNum += buttonValue;
+//                     display.textContent = firstNum;
+//                 } else {
+//                     secNum += buttonValue;
+//                     display.textContent = secNum;
+//                 }
+//                 decimalAllowed = false;
+//             }
+//         } else {
+//             if (operator === '' || firstNum === '') {
+//                 firstNum += buttonValue;
+//                 display.textContent = firstNum;
+//             } else {
+//                 operatorBtn.forEach(button => {
+//                     button.classList.remove('operators')
+//                 })
+//                 secNum += buttonValue;
+//                 display.textContent = secNum;
+//             }
+//         }
+
+//     })
+
+// })
+
 numberBtn.forEach(button => {
     button.addEventListener("click", function () {
         let buttonValue = button.value;
-        if (buttonValue === '.') {
-            if (decimalAllowed) {
+        if (typeof firstNum === 'number') {
+            firstNum = buttonValue;
+            secNum = '';
+            operator = '';
+            holder = '';
+            display.textContent = buttonValue;
+        } else {
+            if (buttonValue === '.') {
+            } else {
                 if (operator === '' || firstNum === '') {
                     firstNum += buttonValue;
                     display.textContent = firstNum;
                 } else {
+                    operatorBtn.forEach(button => {
+                        button.classList.remove('operators')
+                    })
                     secNum += buttonValue;
                     display.textContent = secNum;
                 }
-            } decimalAllowed = false;
-        } else {
-            if (operator === '' || firstNum === '') {
-                firstNum += buttonValue;
-                display.textContent = firstNum;
-            } else {
-                secNum += buttonValue;
-                display.textContent = secNum;
             }
         }
+    });
+});
 
-    })
-
-})
 
 operatorBtn.forEach(button => {
     button.addEventListener("click", function () {
@@ -54,36 +86,47 @@ operatorBtn.forEach(button => {
                 operator = multiply;
                 break;
         }
+        decimalAllowed = true;
+        button.classList.toggle('operators')
     })
 })
 
+let holder;
 
 equals.addEventListener("click", function () {
-    let result = '';
-    result = operate(operator, firstNum, secNum);
-    firstNum = result;
-    secNum = '';
-
+    if (firstNum !== '' && secNum !== '') {
+        let result = operate(operator, firstNum, secNum);
+        firstNum = result;
+        console.log(firstNum)
+        holder = secNum;
+        secNum = '';
+    } else if (typeof (firstNum) === 'number' && secNum === '') {
+        let result = operate(operator, firstNum, holder);
+        firstNum = result;
+        secNum = '';
+    } else {
+        display.textContent = "Error";
+    }
 });
 
 clear.addEventListener("click", () => {
     operator = '';
     firstNum = '';
     secNum = '';
+    decimalAllowed = true;
     display.textContent = 0;
+    operatorBtn.forEach(button => {
+        button.classList.remove('operators')
+    })
 })
-
-// decimal.addEventListener("click", () => {
-//     if (decimalAllowed === true) {
-//         display.textContent += '.';
-//         decimalAllowed = false;
-//     }
-
-// })
 
 const operate = (operator, firstNum, secNum) => {
     let result = operator(firstNum, secNum);
-    display.textContent = result;
+    if (!isFinite(result)) {
+        result = "Error"
+    } else {
+        display.textContent = +(result).toFixed(9);
+    }
     return result;
 }
 
